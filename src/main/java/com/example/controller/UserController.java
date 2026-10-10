@@ -1,0 +1,78 @@
+package com.example.controller;
+
+import com.example.dto.UserDTO;
+import com.example.service.UserService;
+
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDTO> createUser(
+            @Valid @RequestBody UserDTO userDTO) {
+
+        UserDTO savedUser =
+                userService.createUser(userDTO);
+
+        return new ResponseEntity<>(
+                savedUser,
+                HttpStatus.CREATED
+        );
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> getUserById(
+            @PathVariable Long userId) {
+
+        UserDTO user =
+                userService.getUserById(userId);
+
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+
+        List<UserDTO> users =
+                userService.getAllUsers();
+
+        return ResponseEntity.ok(users);
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDTO> updateUser(
+            @PathVariable Long userId,
+            @Valid @RequestBody UserDTO userDTO) {
+
+        UserDTO updatedUser =
+                userService.updateUser(
+                        userId,
+                        userDTO
+                );
+
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable Long userId) {
+
+        userService.deleteUser(userId);
+
+        return ResponseEntity.noContent().build();
+    }
+}
